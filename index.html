@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether Gift</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        #ui { 
+            position: absolute; bottom: 30px; width: 100%; text-align: center; 
+            color: white; font-family: sans-serif; pointer-events: none; z-index: 10;
+            padding: 0 20px; box-sizing: border-box;
+        }
+        #loading { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            color: #0ff; font-family: sans-serif; 
+        }
+        #video-container {
+            position: fixed; bottom: 10px; right: 10px; z-index: 100;
+            cursor: move; user-select: none;
+            transition: box-shadow 0.3s ease; /* Smooth transition for hover effect */
+        }
+        #video-container:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); /* Glow effect on hover */
+        }
+        #video-container.dragging {
+            cursor: grabbing;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8); /* Stronger glow when dragging */
+            z-index: 1000; /* Bring to front when dragging */
+        }
+        #video-container video {
+            width: 200px; height: 150px;
+            border: 2px solid #00ffff; border-radius: 8px; display: block;
+        }
+        #video-container .resize-handle {
+            position: absolute; bottom: 0; right: 0; width: 20px; height: 20px;
+            background: #00ffff; cursor: nwse-resize; border-radius: 0 0 6px 0;
+        }
+        
+        /* Enhanced Responsive Design for All Screen Sizes */
+        
+        /* Extra Large Screens (1440px and up) - 4K monitors, large desktops */
+        @media (min-width: 1440px) {
+            #video-container video {
+                width: 250px; height: 188px;
+            }
+            #ui h1 {
+                font-size: 2.5em;
+            }
+            #ui p {
+                font-size: 1.2em;
+            }
+            #loading {
+                font-size: 1.4em;
+            }
+        }
+        
+        /* Large Screens (1200px to 1439px) - Large desktops, small laptops */
+        @media (min-width: 1200px) and (max-width: 1439px) {
+            #video-container video {
+                width: 220px; height: 165px;
+            }
+            #ui h1 {
+                font-size: 2.2em;
+            }
+            #ui p {
+                font-size: 1.1em;
+            }
+        }
+        
+        /* Desktop Screens (992px to 1199px) - Standard desktops */
+        @media (min-width: 992px) and (max-width: 1199px) {
+            #video-container video {
+                width: 200px; height: 150px;
+            }
+            #ui h1 {
+                font-size: 2em;
+            }
+            #ui p {
+                font-size: 1em;
+            }
+        }
+        
+        /* Small Desktops/Large Tablets (768px to 991px) */
+        @media (min-width: 768px) and (max-width: 991px) {
+            #video-container video {
+                width: 180px; height: 135px;
+            }
+            #ui h1 {
+                font-size: 1.8em;
+            }
+            #ui p {
+                font-size: 0.9em;
+            }
+            #loading {
+                font-size: 1.1em;
+            }
+        }
+        
+        /* Tablets (600px to 767px) */
+        @media (min-width: 600px) and (max-width: 767px) {
+            #video-container video {
+                width: 160px; height: 120px;
+            }
+            #ui {
+                bottom: 25px;
+                padding: 0 15px;
+            }
+            #ui h1 {
+                font-size: 1.6em;
+            }
+            #ui p {
+                font-size: 0.85em;
+            }
+            #loading {
+                font-size: 1em;
+            }
+            #video-container .resize-handle {
+                width: 18px; height: 18px;
+            }
+        }
+        
+        /* Large Phones/Small Tablets (480px to 599px) */
+        @media (min-width: 480px) and (max-width: 599px) {
+            #video-container video {
+                width: 140px; height: 105px;
+            }
+            #ui {
+                bottom: 20px;
+                padding: 0 12px;
+            }
+            #ui h1 {
+                font-size: 1.5em;
+            }
+            #ui p {
+                font-size: 0.8em;
+            }
+            #loading {
+                font-size: 0.95em;
+            }
+            #video-container .resize-handle {
+                width: 16px; height: 16px;
+            }
+        }
+        
+        /* Medium Phones (360px to 479px) */
+        @media (min-width: 360px) and (max-width: 479px) {
+            #video-container video {
+                width: 120px; height: 90px;
+            }
+            #ui {
+                bottom: 15px;
+                padding: 0 10px;
+            }
+            #ui h1 {
+                font-size: 1.4em;
+                margin-bottom: 5px;
+            }
+            #ui p {
+                font-size: 0.75em;
+                margin: 0;
+            }
+            #loading {
+                font-size: 0.9em;
+            }
+            #video-container .resize-handle {
+                width: 14px; height: 14px;
+            }
+        }
+        
+        /* Small Phones (320px to 359px) */
+        @media (max-width: 359px) {
+            #video-container video {
+                width: 100px; height: 75px;
+            }
+            #ui {
+                bottom: 10px;
+                padding: 0 8px;
+            }
+            #ui h1 {
+                font-size: 1.2em;
+                margin-bottom: 3px;
+            }
+            #ui p {
+                font-size: 0.7em;
+                margin: 0;
+            }
+            #loading {
+                font-size: 0.85em;
+            }
+            #video-container .resize-handle {
+                width: 12px; height: 12px;
+            }
+            
+            /* Performance optimizations for small devices */
+            body {
+                background: #000; /* Solid black instead of potential gradients */
+            }
+        }
+        
+        /* Performance optimizations for mobile devices */
+        @media (max-width: 768px) {
+            /* Reduce particle count on mobile for better performance */
+            .performance-mode .particle-count {
+                --particle-count: 6000;
+            }
+            
+            /* Optimize animations */
+            * {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                -webkit-perspective: 1000;
+                perspective: 1000;
+            }
+        }
+        
+        /* Extra performance optimizations for very small devices */
+        @media (max-width: 480px) {
+            /* Disable some visual effects for performance */
+            .performance-mode #video-container:hover {
+                box-shadow: none; /* Disable hover glow */
+            }
+            
+            .performance-mode #video-container.dragging {
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Reduced glow */
+            }
+        }
+        
+        /* Ultra-wide screens (2560px and up) */
+        @media (min-width: 2560px) {
+            #video-container video {
+                width: 300px; height: 225px;
+            }
+            #ui h1 {
+                font-size: 3em;
+            }
+            #ui p {
+                font-size: 1.4em;
+            }
+            #loading {
+                font-size: 1.6em;
+            }
+        }
+        
+        /* Portrait orientation adjustments */
+        @media (orientation: portrait) and (max-height: 600px) {
+            #ui {
+                bottom: 10px;
+                padding: 0 8px;
+            }
+            #ui h1 {
+                font-size: 1.2em;
+                margin-bottom: 2px;
+            }
+            #ui p {
+                font-size: 0.7em;
+                margin: 0;
+            }
+        }
+        
+        /* Landscape orientation adjustments */
+        @media (orientation: landscape) and (max-height: 500px) {
+            #video-container video {
+                width: 120px;
+                height: 90px;
+            }
+            #ui {
+                bottom: 5px;
+                padding: 0 10px;
+            }
+            #ui h1 {
+                font-size: 1.3em;
+                margin-bottom: 2px;
+            }
+            #ui p {
+                font-size: 0.75em;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">✨ PREPARING THE GALAXY... ✨</div>
+    <div id="ui"><h1>Happy Monthsary my Kaye!</h1><p id="status">Waiting for hand...</p></div>
+    <div id="video-container">
+        <video class="input_video"></video>
+        <div class="resize-handle"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+    <script>
+        // --- SCENE SETUP ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        camera.position.z = 15;
+
+        // --- GESTURE CONFIG (Time-Based) ---
+        let gestureTimer = 0;
+        const GESTURE_THRESHOLD = 15; // Number of frames to "confirm" a gesture
+        let detectedGesture = "none";
+        let confirmedGesture = "none";
+
+        // --- PERFORMANCE OPTIMIZATION ---
+        // Detect device capabilities and adjust performance
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSmallScreen = window.innerWidth < 768;
+        const isLowEndDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+        
+        // Adjust particle count based on device
+        let optimizedParticleCount = 12000;
+        if (isMobile && isSmallScreen) {
+            optimizedParticleCount = 6000; // Reduce particles on mobile
+            document.body.classList.add('performance-mode');
+        } else if (isLowEndDevice) {
+            optimizedParticleCount = 8000; // Reduce particles on low-end devices
+            document.body.classList.add('performance-mode');
+        }
+        
+        // --- PARTICLE GENERATORS ---
+        const particleCount = optimizedParticleCount;
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(particleCount * 3);
+        const targetPos = new Float32Array(particleCount * 3);
+        const curVel = new Float32Array(particleCount * 3);
+        const originalPos = new Float32Array(particleCount * 3);
+        
+        // Time-based dispersion system
+        let dispersionTimer = 0;
+        let isDispersing = false;
+        const DISPERSION_SPEED = 0.02; // Increased from 0.005 for faster dispersion
+        
+        // Random glowing colors for each particle
+        const particleColors = new Float32Array(particleCount * 3);
+        const glowColors = [
+            [1, 1, 1],        // White
+            [1, 0.9, 0.7],    // Warm white
+            [0.9, 0.9, 1],    // Cool white
+            [1, 1, 0.8],      // Yellow-white
+            [0.8, 0.9, 1],    // Blue-white
+            [1, 0.8, 0.9],    // Pink-white
+            [0.9, 1, 0.9],    // Green-white
+        ];
+
+        for(let i=0; i<particleCount*3; i++) {
+            pos[i] = (Math.random() - 0.5) * 40;
+            targetPos[i] = pos[i];
+            originalPos[i] = pos[i]; // Store original positions
+        }
+
+        // Assign random glow colors to each particle
+        for(let i = 0; i < particleCount; i++) {
+            const color = glowColors[Math.floor(Math.random() * glowColors.length)];
+            particleColors[i*3] = color[0];
+            particleColors[i*3+1] = color[1];
+            particleColors[i*3+2] = color[2];
+        }
+
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+        
+        // Create star texture with white core and glow
+        const createStarTexture = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            
+            // Create glowing star effect
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');     // Bright white core
+            gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.9)');   // White
+            gradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.4)');   // Warm glow
+            gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');     // Fade out
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 64, 64);
+            
+            // Add subtle star points
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            for(let i = 0; i < 4; i++) {
+                const angle = (Math.PI / 2) * i;
+                const x = 32 + Math.cos(angle) * 8;
+                const y = 32 + Math.sin(angle) * 8;
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + Math.cos(angle + Math.PI/8) * 4, y + Math.sin(angle + Math.PI/8) * 4);
+                ctx.lineTo(x + Math.cos(angle - Math.PI/8) * 4, y + Math.sin(angle - Math.PI/8) * 4);
+                ctx.closePath();
+            }
+            ctx.fill();
+            
+            return new THREE.CanvasTexture(canvas);
+        };
+
+        const mat = new THREE.PointsMaterial({ 
+            size: 0.25, 
+            map: createStarTexture(), 
+            transparent: true, 
+            blending: THREE.AdditiveBlending, 
+            depthWrite: false, 
+            vertexColors: true 
+        });
+        const points = new THREE.Points(geo, mat);
+        scene.add(points);
+
+        // --- SHAPE LOGIC ---
+        function setHeartTarget() {
+            for (let i = 0; i < particleCount; i++) {
+                const t = (i / particleCount) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                targetPos[i*3] = x * 0.5; // Increased from 0.4 for larger heart
+                targetPos[i*3+1] = y * 0.5; // Increased from 0.4 for larger heart
+                targetPos[i*3+2] = (Math.random() - 0.5) * 3; // 3D Volume
+                
+                // Make particles pink for heart formation
+                particleColors[i*3] = 1;     // R
+                particleColors[i*3+1] = 0.4; // G
+                particleColors[i*3+2] = 0.7; // B
+            }
+            geo.attributes.color.needsUpdate = true;
+            mat.size = 0.3; // Increased from 0.15 for better visibility
+        }
+
+        function setTextTarget(text) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800; canvas.height = 200; // Increased from 600x150 for better clarity
+            
+            // Enhanced text rendering for clarity
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 72px Arial'; // Increased from 48px for better visibility
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Add text shadow for better definition
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            
+            ctx.fillText(text, canvas.width/2, canvas.height/2);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const textPixels = [];
+            
+            // Reduced step size for more detailed text
+            for (let y = 0; y < canvas.height; y += 2) { // Reduced from 3 to 2
+                for (let x = 0; x < canvas.width; x += 2) { // Reduced from 3 to 2
+                    const index = (y * canvas.width + x) * 4;
+                    if (pixels[index + 3] > 128) {
+                        textPixels.push({
+                            x: (x - canvas.width/2) * 0.025, // Slightly larger scale
+                            y: -(y - canvas.height/2) * 0.025, // Slightly larger scale
+                            z: (Math.random() - 0.5) * 1.5 // Reduced depth for better focus
+                        });
+                    }
+                }
+            }
+            
+            for (let i = 0; i < particleCount; i++) {
+                if (textPixels.length > 0) {
+                    const pixel = textPixels[i % textPixels.length];
+                    targetPos[i*3] = pixel.x + (Math.random() - 0.5) * 0.08; // Slightly tighter spread
+                    targetPos[i*3+1] = pixel.y + (Math.random() - 0.5) * 0.08; // Slightly tighter spread
+                    targetPos[i*3+2] = pixel.z;
+                }
+                
+                // Set colors based on text type
+                if (text.includes("Monthsary")) {
+                    // Gold color for monthsary
+                    particleColors[i*3] = 1;     // R
+                    particleColors[i*3+1] = 0.84; // G
+                    particleColors[i*3+2] = 0;   // B
+                } else if (text.includes("love")) {
+                    // Pink color for love
+                    particleColors[i*3] = 1;     // R
+                    particleColors[i*3+1] = 0.08; // G
+                    particleColors[i*3+2] = 0.58; // B
+                }
+            }
+            geo.attributes.color.needsUpdate = true;
+            mat.size = 0.35; // Increased from 0.12 for better visibility
+        }
+
+        function setExplosionTarget() {
+            for (let i = 0; i < particleCount*3; i++) targetPos[i] = (Math.random() - 0.5) * 40;
+            
+            // Reset to random star colors
+            for(let i = 0; i < particleCount; i++) {
+                const color = glowColors[Math.floor(Math.random() * glowColors.length)];
+                particleColors[i*3] = color[0];
+                particleColors[i*3+1] = color[1];
+                particleColors[i*3+2] = color[2];
+            }
+            geo.attributes.color.needsUpdate = true;
+            mat.size = 0.25; // Increased from 0.12 to match base size
+        }
+
+        // --- MEDIAPIPE ---
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` 
+        });
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+        
+        let handDetected = false;
+        let noHandCount = 0;
+        
+        hands.onResults(results => {
+            document.getElementById('loading').style.display = 'none';
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                handDetected = true;
+                noHandCount = 0;
+                isDispersing = false; // Stop dispersion when hand is detected
+                dispersionTimer = 0; // Reset dispersion timer
+                
+                const h = results.multiHandLandmarks[0];
+                
+                // Enhanced gesture detection
+                const thumbTip = h[4];
+                const indexTip = h[8];
+                const middleTip = h[12];
+                const ringTip = h[16];
+                const pinkyTip = h[20];
+                const indexMcp = h[5];
+                const middleMcp = h[9];
+                const ringMcp = h[13];
+                const pinkyMcp = h[17];
+
+                // Calculate distances for better gesture detection
+                const thumbIndexDist = Math.sqrt(Math.pow(thumbTip.x - indexTip.x, 2) + Math.pow(thumbTip.y - indexTip.y, 2));
+                const indexOpen = indexTip.y < indexMcp.y;
+                const middleOpen = middleTip.y < middleMcp.y;
+                const ringOpen = ringTip.y < ringMcp.y;
+                const pinkyOpen = pinkyTip.y < pinkyMcp.y;
+                
+                const openFingers = [indexOpen, middleOpen, ringOpen, pinkyOpen].filter(Boolean).length;
+                
+                console.log(`✋ Hand detected! Open fingers: ${openFingers}, Thumb-index dist: ${thumbIndexDist.toFixed(3)}`);
+                
+                // Gesture classification
+                let currentAttempt = "none";
+                if (openFingers >= 4 && thumbIndexDist > 0.15) {
+                    currentAttempt = "heart";
+                    console.log("🖐️ Open hand detected - Heart formation");
+                }
+                else if (openFingers <= 1) {
+                    currentAttempt = "monthsary";
+                    console.log("✊ Closed fist detected - Monthsary text");
+                }
+                else if (indexOpen && middleOpen && !ringOpen && !pinkyOpen) {
+                    currentAttempt = "love";
+                    console.log("✌️ Peace sign detected - Love text");
+                }
+
+                // TIME BASED DETECTION
+                if (currentAttempt === detectedGesture && currentAttempt !== "none") {
+                    gestureTimer++;
+                    if (gestureTimer > GESTURE_THRESHOLD && confirmedGesture !== currentAttempt) {
+                        confirmedGesture = currentAttempt;
+                        
+                        switch(currentAttempt) {
+                            case "heart":
+                                setHeartTarget();
+                                document.getElementById('status').innerText = "💖 Heart Shape!";
+                                console.log("❤️ FORMING HEART SHAPE");
+                                break;
+                            case "monthsary":
+                                setTextTarget("Happy Monthsary");
+                                document.getElementById('status').innerText = "🎉 Happy Monthsary!";
+                                console.log("🎉 FORMING 'HAPPY MONTHSARY' TEXT");
+                                break;
+                            case "love":
+                                setTextTarget("I love you Kaye");
+                                document.getElementById('status').innerText = "💕 I love you Kaye!";
+                                console.log("💕 FORMING 'I LOVE YOU KAYE' TEXT");
+                                break;
+                        }
+                    }
+                } else if (currentAttempt === "none") {
+                    gestureTimer = 0;
+                }
+                detectedGesture = currentAttempt;
+            } else {
+                // No hand detected - start time-based dispersion
+                noHandCount++;
+                if (noHandCount > 5 && handDetected) { // Start dispersing after 5 frames of no hand
+                    isDispersing = true;
+                    console.log("👋 Hand lost - starting time-based dispersion...");
+                }
+                
+                if (isDispersing && confirmedGesture !== "none") {
+                    confirmedGesture = "none";
+                    document.getElementById('status').innerText = "Stars dispersing...";
+                }
+            }
+        });
+
+        // Initialize camera with working approach
+        const videoElement = document.querySelector('.input_video');
+        const cam = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({ image: videoElement });
+            },
+            width: 640,
+            height: 480
+        });
+        
+        cam.start().then(() => {
+            console.log("📹 Camera started successfully!");
+            document.getElementById('status').innerText = "Show your hand to camera...";
+        }).catch(error => {
+            console.error("❌ Camera start failed:", error);
+            document.getElementById('status').innerText = "Camera error - please refresh";
+        });
+
+        // --- ANIMATION ENGINE WITH PERFORMANCE OPTIMIZATION ---
+        let frameCount = 0;
+        let lastTime = performance.now();
+        let fps = 60;
+        let targetFPS = 60;
+        
+        // Adjust target FPS based on device
+        if (isMobile && isSmallScreen) {
+            targetFPS = 30; // Reduce FPS on mobile
+        } else if (isLowEndDevice) {
+            targetFPS = 45; // Moderate FPS on low-end devices
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // FPS limiting for performance
+            const currentTime = performance.now();
+            const deltaTime = currentTime - lastTime;
+            
+            if (deltaTime < 1000 / targetFPS) {
+                return; // Skip frame to maintain target FPS
+            }
+            
+            lastTime = currentTime;
+            frameCount++;
+            
+            const positions = geo.attributes.position.array;
+
+            // Handle time-based dispersion
+            if (isDispersing) {
+                dispersionTimer += DISPERSION_SPEED;
+                if (dispersionTimer > 1) dispersionTimer = 1;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+                    
+                    // Smoothly interpolate from current position to original scattered position
+                    const easeProgress = dispersionTimer;
+                    targetPos[i3] += (originalPos[i3] - targetPos[i3]) * easeProgress * 0.15; // Increased from 0.08
+                    targetPos[i3+1] += (originalPos[i3+1] - targetPos[i3+1]) * easeProgress * 0.15;
+                    targetPos[i3+2] += (originalPos[i3+2] - targetPos[i3+2]) * easeProgress * 0.15;
+                    
+                    // Gradually return to random star colors
+                    if (dispersionTimer > 0.3) { // Start color fade earlier at 30% instead of 50%
+                        const color = glowColors[Math.floor(Math.random() * glowColors.length)];
+                        const colorBlend = (dispersionTimer - 0.3) / 0.7; // Adjusted blend timing
+                        particleColors[i3] = particleColors[i3] * (1 - colorBlend) + color[0] * colorBlend;
+                        particleColors[i3+1] = particleColors[i3+1] * (1 - colorBlend) + color[1] * colorBlend;
+                        particleColors[i3+2] = particleColors[i3+2] * (1 - colorBlend) + color[2] * colorBlend;
+                    }
+                }
+                geo.attributes.color.needsUpdate = true;
+                
+                if (dispersionTimer >= 1) {
+                    isDispersing = false;
+                    document.getElementById('status').innerText = "Waiting for hand...";
+                }
+            }
+
+            // Physics-based movement with much faster speed
+            for (let i = 0; i < particleCount * 3; i++) {
+                const diff = targetPos[i] - positions[i];
+                curVel[i] += diff * 0.03; // Increased from 0.01 for faster acceleration
+                curVel[i] *= 0.92;        // Reduced from 0.9 for less damping (faster movement)
+                positions[i] += curVel[i] * 1.5; // Added multiplier for much faster movement
+            }
+
+            geo.attributes.position.needsUpdate = true;
+            
+            // Reduce rotation frequency on mobile for performance
+            const rotationSpeed = isMobile ? 0.004 : 0.008;
+            points.rotation.y += rotationSpeed;
+            
+            renderer.render(scene, camera);
+            
+            // Performance monitoring
+            if (frameCount % 60 === 0) {
+                fps = Math.round(1000 / deltaTime);
+                if (fps < 20 && targetFPS > 20) {
+                    targetFPS = Math.max(20, targetFPS - 5); // Auto-adjust FPS if performance is poor
+                }
+            }
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- ENHANCED DRAGGABLE VIDEO CONTAINER ---
+        const videoContainer = document.getElementById('video-container');
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+        let dragStartTime;
+        let lastX = 0;
+        let lastY = 0;
+        let velocityX = 0;
+        let velocityY = 0;
+
+        // Enhanced drag events with momentum
+        videoContainer.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        // Touch events for mobile
+        videoContainer.addEventListener('touchstart', dragStart);
+        document.addEventListener('touchmove', drag);
+        document.addEventListener('touchend', dragEnd);
+
+        // Double-click to center
+        videoContainer.addEventListener('dblclick', () => {
+            xOffset = (window.innerWidth - videoContainer.offsetWidth) / 2;
+            yOffset = (window.innerHeight - videoContainer.offsetHeight) / 2;
+            videoContainer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            videoContainer.style.transition = 'transform 0.3s ease';
+            setTimeout(() => {
+                videoContainer.style.transition = '';
+            }, 300);
+        });
+
+        function dragStart(e) {
+            if (e.target.classList.contains('resize-handle')) return;
+            
+            isDragging = true;
+            dragStartTime = Date.now();
+            videoContainer.classList.add('dragging');
+            
+            const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+            
+            initialX = clientX - xOffset;
+            initialY = clientY - yOffset;
+            lastX = clientX;
+            lastY = clientY;
+            
+            // Reset velocity
+            velocityX = 0;
+            velocityY = 0;
+            
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            
+            e.preventDefault();
+            
+            const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+
+            // Calculate velocity for momentum effect
+            velocityX = clientX - lastX;
+            velocityY = clientY - lastY;
+            
+            currentX = clientX - initialX;
+            currentY = clientY - initialY;
+
+            // Enhanced boundary checking with padding
+            const containerRect = videoContainer.getBoundingClientRect();
+            const padding = 10;
+            const maxX = window.innerWidth - containerRect.width - padding;
+            const maxY = window.innerHeight - containerRect.height - padding;
+            const minX = padding;
+            const minY = padding;
+            
+            // Apply boundaries
+            xOffset = Math.max(minX, Math.min(currentX, maxX));
+            yOffset = Math.max(minY, Math.min(currentY, maxY));
+
+            videoContainer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            
+            lastX = clientX;
+            lastY = clientY;
+        }
+
+        function dragEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            videoContainer.classList.remove('dragging');
+            
+            // Apply momentum effect
+            const dragDuration = Date.now() - dragStartTime;
+            if (dragDuration < 200) { // Quick drag - apply momentum
+                applyMomentum();
+            }
+            
+            initialX = currentX;
+            initialY = currentY;
+        }
+
+        function applyMomentum() {
+            const friction = 0.95;
+            const minVelocity = 0.5;
+            
+            function animateMomentum() {
+                if (Math.abs(velocityX) < minVelocity && Math.abs(velocityY) < minVelocity) {
+                    return;
+                }
+                
+                // Apply velocity
+                xOffset += velocityX;
+                yOffset += velocityY;
+                
+                // Apply friction
+                velocityX *= friction;
+                velocityY *= friction;
+                
+                // Apply boundaries
+                const containerRect = videoContainer.getBoundingClientRect();
+                const padding = 10;
+                const maxX = window.innerWidth - containerRect.width - padding;
+                const maxY = window.innerHeight - containerRect.height - padding;
+                const minX = padding;
+                const minY = padding;
+                
+                xOffset = Math.max(minX, Math.min(xOffset, maxX));
+                yOffset = Math.max(minY, Math.min(yOffset, maxY));
+                
+                // Stop if hitting boundaries
+                if (xOffset <= minX || xOffset >= maxX) velocityX = 0;
+                if (yOffset <= minY || yOffset >= maxY) velocityY = 0;
+                
+                videoContainer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+                
+                requestAnimationFrame(animateMomentum);
+            }
+            
+            animateMomentum();
+        }
+
+        // Keyboard shortcuts for positioning
+        document.addEventListener('keydown', (e) => {
+            const step = 50;
+            const containerRect = videoContainer.getBoundingClientRect();
+            const padding = 10;
+            const maxX = window.innerWidth - containerRect.width - padding;
+            const maxY = window.innerHeight - containerRect.height - padding;
+            const minX = padding;
+            const minY = padding;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                    xOffset = Math.max(minX, xOffset - step);
+                    break;
+                case 'ArrowRight':
+                    xOffset = Math.min(maxX, xOffset + step);
+                    break;
+                case 'ArrowUp':
+                    yOffset = Math.max(minY, yOffset - step);
+                    break;
+                case 'ArrowDown':
+                    yOffset = Math.min(maxY, yOffset + step);
+                    break;
+                case ' ': // Spacebar to center
+                    e.preventDefault();
+                    xOffset = (window.innerWidth - containerRect.width) / 2;
+                    yOffset = (window.innerHeight - containerRect.height) / 2;
+                    break;
+                default:
+                    return;
+            }
+            
+            videoContainer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+        });
+
+        // Save position to localStorage
+        function savePosition() {
+            localStorage.setItem('videoPosition', JSON.stringify({ x: xOffset, y: yOffset }));
+        }
+
+        function loadPosition() {
+            const saved = localStorage.getItem('videoPosition');
+            if (saved) {
+                const pos = JSON.parse(saved);
+                xOffset = pos.x;
+                yOffset = pos.y;
+                videoContainer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            }
+        }
+
+        // Auto-save position on drag end
+        videoContainer.addEventListener('mouseup', savePosition);
+        videoContainer.addEventListener('touchend', savePosition);
+
+        // Load saved position on startup
+        loadPosition();
+    </script>
+</body>
+</html>
