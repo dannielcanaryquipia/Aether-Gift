@@ -35,15 +35,48 @@ A romantic, interactive web experience that transforms hand gestures into beauti
 
 ## 📱 Performance Optimizations
 
-- **Advanced device detection** (mobile, tablet, desktop, high-end)
-- **Adaptive particle count** (3K-15K based on device capabilities)
-- **Dynamic FPS targeting** (30-60 FPS with auto-adjustment)
-- **Quality-based textures** (low/medium/high/ultra rendering)
-- **Intelligent particle sizing** (0.15-0.30px adaptive scaling)
-- **High-DPI display optimization** for retina screens
-- **Hardware acceleration** with CSS transforms
-- **Memory-efficient particle system** using BufferGeometry
-- **Mobile battery optimization** with reduced effects on low-end devices
+### Advanced Device Detection & Adaptive Performance
+- **Smart device classification** (mobile, tablet, desktop, high-end, low-end)
+- **Dynamic particle scaling** based on device capabilities:
+  - **Small Mobile**: 1,000 particles (0.05px size)
+  - **Large Mobile**: 1,500 particles (0.07px size)
+  - **Tablets**: 2,500 particles (0.08px size)
+  - **Low-end Desktop**: 3,000 particles (0.09px size)
+  - **High-DPI Displays**: 4,000 particles (0.11px size)
+  - **High-end Desktop**: 5,000 particles (0.12px size)
+  - **Standard Desktop**: 5,000 particles (0.10px size)
+
+### Enhanced Physics & Movement Optimization
+- **Ultra-smooth particle physics** with optimized acceleration (0.035)
+- **Advanced damping system** (0.78) for natural movement without bounce
+- **Smooth dispersion transitions** with reduced speed (0.025) for graceful animations
+- **Fluid position interpolation** (0.12 factor) between formation and dispersion states
+
+### Frame Rate & Performance Management
+- **Universal 60 FPS targeting** across all device types for smooth animation
+- **Intelligent FPS monitoring** with adaptive performance recovery
+- **Aggressive performance scaling** only when severely poor (< 15 FPS)
+- **Auto-recovery system** that gradually restores optimal FPS when performance improves
+
+### Memory & Rendering Efficiency
+- **Hardware-accelerated CSS transforms** for better mobile performance
+- **Quality-based texture rendering** (32px/64px canvas based on device)
+- **Optimized BufferGeometry** for memory-efficient particle management
+- **Reduced rotation frequency** on mobile devices (0.004 vs 0.008)
+
+### Visual Quality Optimizations
+- **Adaptive particle sizing** for each formation type:
+  - Heart formations: 0.12px particles
+  - Text formations: 0.13px particles  
+  - Explosion/dispersion: 0.10px particles
+- **Enhanced color blending** with cosmic glow effects
+- **Optimized star textures** with quality-based rendering
+
+### Mobile-Specific Enhancements
+- **Touch-optimized interactions** with momentum physics
+- **Battery-conscious performance** modes
+- **Responsive video container** with adaptive sizing
+- **Performance-mode CSS classes** for reduced visual effects on small devices
 
 ## 🎮 Controls
 

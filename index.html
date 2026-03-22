@@ -262,7 +262,7 @@
         @media (max-width: 768px) {
             /* Reduce particle count on mobile for better performance */
             .performance-mode .particle-count {
-                --particle-count: 6000;
+                --particle-count: 1500;
             }
             
             /* Optimize animations */
@@ -379,48 +379,48 @@
         const pixelRatio = window.devicePixelRatio || 1;
         
         // Advanced particle count optimization
-        let optimizedParticleCount = 12000;
-        let particleSize = 0.25;
+        let optimizedParticleCount = 5000;
+        let particleSize = 0.1;
         let targetFPS = 60;
         let animationQuality = 'high';
         
         // Adaptive performance settings based on device capabilities
         if (isMobile && isSmallScreen) {
-            optimizedParticleCount = 3000; // Ultra-low for small mobile
-            particleSize = 0.15;
-            targetFPS = 30;
+            optimizedParticleCount = 1000; // Ultra-low for small mobile
+            particleSize = 0.05;
+            targetFPS = 60; // Increased from 30 for smoother animation
             animationQuality = 'low';
             document.body.classList.add('performance-mode');
         } else if (isMobile && !isSmallScreen) {
-            optimizedParticleCount = 5000; // Moderate for larger mobile
-            particleSize = 0.2;
-            targetFPS = 45;
+            optimizedParticleCount = 1500; // Moderate for larger mobile
+            particleSize = 0.07;
+            targetFPS = 60; // Increased from 45 for smoother animation
             animationQuality = 'medium';
             document.body.classList.add('performance-mode');
         } else if (isTablet) {
-            optimizedParticleCount = 7000; // Optimized for tablets
-            particleSize = 0.22;
-            targetFPS = 50;
+            optimizedParticleCount = 2500; // Optimized for tablets
+            particleSize = 0.08;
+            targetFPS = 60; // Increased from 50 for smoother animation
             animationQuality = 'medium';
         } else if (isLowEndDevice) {
-            optimizedParticleCount = 8000; // Reduced for low-end desktop
-            particleSize = 0.23;
-            targetFPS = 45;
+            optimizedParticleCount = 3000; // Reduced for low-end desktop
+            particleSize = 0.09;
+            targetFPS = 60; // Increased from 45 for smoother animation
             animationQuality = 'medium';
             document.body.classList.add('performance-mode');
         } else if (pixelRatio > 1.5) {
-            optimizedParticleCount = 10000; // Adjust for high-DPI displays
-            particleSize = 0.28;
-            targetFPS = 55;
+            optimizedParticleCount = 4000; // Adjust for high-DPI displays
+            particleSize = 0.11;
+            targetFPS = 60; // No change - already smooth
         } else if (isHighEnd) {
-            optimizedParticleCount = 15000; // Maximum for high-end devices
-            particleSize = 0.3;
-            targetFPS = 60;
+            optimizedParticleCount = 5000; // Maximum for high-end devices
+            particleSize = 0.12;
+            targetFPS = 60; // No change - already smooth
             animationQuality = 'ultra';
         } else {
-            optimizedParticleCount = 12000; // Standard desktop
-            particleSize = 0.25;
-            targetFPS = 60;
+            optimizedParticleCount = 5000; // Standard desktop
+            particleSize = 0.1;
+            targetFPS = 60; // No change - already smooth
             animationQuality = 'high';
         }
         
@@ -436,7 +436,7 @@
         // Time-based dispersion system
         let dispersionTimer = 0;
         let isDispersing = false;
-        const DISPERSION_SPEED = 0.02; // Increased from 0.005 for faster dispersion
+        const DISPERSION_SPEED = 0.025; // Reduced from 0.03 for smoother dispersion
         
         // Cosmic glowing colors inspired by northern lights
         const glowColors = [
@@ -540,7 +540,7 @@
                 particleColors[i*3+2] = 0.7; // B
             }
             geo.attributes.color.needsUpdate = true;
-            mat.size = 0.3; // Increased from 0.15 for better visibility
+            mat.size = 0.12; // Further reduced for better performance
         }
 
         function setTextTarget(text) {
@@ -602,7 +602,7 @@
                 }
             }
             geo.attributes.color.needsUpdate = true;
-            mat.size = 0.35; // Increased from 0.12 for better visibility
+            mat.size = 0.13; // Further reduced for better performance
         }
 
         function setExplosionTarget() {
@@ -616,7 +616,7 @@
                 particleColors[i*3+2] = color[2];
             }
             geo.attributes.color.needsUpdate = true;
-            mat.size = 0.25; // Increased from 0.12 to match base size
+            mat.size = 0.1; // Further reduced to match optimized base size
         }
 
         // --- MEDIAPIPE ---
@@ -776,9 +776,9 @@
                     
                     // Smoothly interpolate from current position to original scattered position
                     const easeProgress = dispersionTimer;
-                    targetPos[i3] += (originalPos[i3] - targetPos[i3]) * easeProgress * 0.15; // Increased from 0.08
-                    targetPos[i3+1] += (originalPos[i3+1] - targetPos[i3+1]) * easeProgress * 0.15;
-                    targetPos[i3+2] += (originalPos[i3+2] - targetPos[i3+2]) * easeProgress * 0.15;
+                    targetPos[i3] += (originalPos[i3] - targetPos[i3]) * easeProgress * 0.12; // Reduced from 0.15 for smoother transition
+                    targetPos[i3+1] += (originalPos[i3+1] - targetPos[i3+1]) * easeProgress * 0.12;
+                    targetPos[i3+2] += (originalPos[i3+2] - targetPos[i3+2]) * easeProgress * 0.12;
                     
                     // Gradually return to random star colors
                     if (dispersionTimer > 0.3) { // Start color fade earlier at 30% instead of 50%
@@ -797,12 +797,12 @@
                 }
             }
 
-            // Physics-based movement with much faster speed
+            // Physics-based movement with optimized speed and reduced bounce
             for (let i = 0; i < particleCount * 3; i++) {
                 const diff = targetPos[i] - positions[i];
-                curVel[i] += diff * 0.03; // Increased from 0.01 for faster acceleration
-                curVel[i] *= 0.96;        // Increased damping for less bounce
-                positions[i] += curVel[i];     // Removed multiplier for smoother movement
+                curVel[i] += diff * 0.035; // Increased from 0.025 for faster formation speed
+                curVel[i] *= 0.78;        // Reduced damping from 0.72 for smoother movement
+                positions[i] += curVel[i];     // Smooth movement
             }
 
             geo.attributes.position.needsUpdate = true;
@@ -813,11 +813,16 @@
             
             renderer.render(scene, camera);
             
-            // Performance monitoring
+            // Performance monitoring with adaptive FPS
             if (frameCount % 60 === 0) {
                 fps = Math.round(1000 / deltaTime);
-                if (fps < 20 && targetFPS > 20) {
-                    targetFPS = Math.max(20, targetFPS - 5); // Auto-adjust FPS if performance is poor
+                // Only reduce FPS if performance is severely poor
+                if (fps < 15 && targetFPS > 15) {
+                    targetFPS = Math.max(15, targetFPS - 10); // More aggressive reduction for very poor performance
+                }
+                // Auto-recover FPS if performance improves
+                else if (fps > 50 && targetFPS < 60) {
+                    targetFPS = Math.min(60, targetFPS + 5); // Gradually increase FPS back to 60
                 }
             }
         }
