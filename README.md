@@ -10,10 +10,12 @@ A romantic, interactive web experience that transforms hand gestures into beauti
 - **Peace Sign** → Shows "I love you Kaye" in pink particles
 
 ### Visual Effects
-- **12,000+ animated particles** with customizable glow effects
+- **15,000+ animated particles** with customizable glow effects
 - **Real-time physics simulation** with smooth transitions
 - **Dynamic color changes** based on gesture type
 - **Automatic particle dispersion** when no hand is detected
+- **Cosmic background** with northern lights aurora effects
+- **Floating cosmic ash** particles for galaxy atmosphere
 - **Responsive design** optimized for all screen sizes
 
 ### Interactive Elements
@@ -33,11 +35,15 @@ A romantic, interactive web experience that transforms hand gestures into beauti
 
 ## 📱 Performance Optimizations
 
-- **Adaptive particle count** based on device capabilities
-- **FPS limiting** for smooth performance on mobile
-- **Responsive scaling** for different screen sizes
+- **Advanced device detection** (mobile, tablet, desktop, high-end)
+- **Adaptive particle count** (3K-15K based on device capabilities)
+- **Dynamic FPS targeting** (30-60 FPS with auto-adjustment)
+- **Quality-based textures** (low/medium/high/ultra rendering)
+- **Intelligent particle sizing** (0.15-0.30px adaptive scaling)
+- **High-DPI display optimization** for retina screens
 - **Hardware acceleration** with CSS transforms
 - **Memory-efficient particle system** using BufferGeometry
+- **Mobile battery optimization** with reduced effects on low-end devices
 
 ## 🎮 Controls
 
@@ -48,10 +54,13 @@ A romantic, interactive web experience that transforms hand gestures into beauti
 4. **Remove hand** → Particles disperse naturally
 
 ### Video Feed Controls
-- **Drag** to move the video preview
+- **Drag** to move the video preview anywhere on screen
+- **Hide/Show toggle** button for camera privacy
 - **Double-click** to center the video
 - **Arrow keys** for precise positioning
 - **Spacebar** to center quickly
+- **High z-index** ensures video stays above 3D particles
+- **Touch support** for mobile devices
 
 ## 🛠️ Setup & Installation
 
@@ -68,10 +77,14 @@ A romantic, interactive web experience that transforms hand gestures into beauti
 ## 🎨 Customization
 
 ### Particle Count
-Adjust `optimizedParticleCount` in the JavaScript to balance performance vs. visual quality:
-- Desktop: 12,000 particles
-- Mobile: 6,000 particles
-- Low-end devices: 8,000 particles
+Adjust `optimizedParticleCount` in JavaScript to balance performance vs. visual quality:
+- **High-end Desktop**: 15,000 particles (ultra quality)
+- **Standard Desktop**: 12,000 particles (high quality)  
+- **High-DPI Displays**: 10,000 particles (optimized)
+- **Tablets**: 7,000 particles (medium quality)
+- **Low-end Desktop**: 8,000 particles (medium quality)
+- **Large Mobile**: 5,000 particles (medium quality)
+- **Small Mobile**: 3,000 particles (low quality)
 
 ### Colors & Text
 Modify the gesture functions to customize:

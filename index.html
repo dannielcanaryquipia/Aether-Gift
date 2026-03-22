@@ -6,6 +6,50 @@
     <title>Aether Gift</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; }
+        
+        /* Cosmic ash and northern lights background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+                linear-gradient(180deg, #000428 0%, #004e92 100%);
+            animation: northernLights 20s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+        
+        /* Cosmic ash particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 10% 80%, white, transparent);
+            background-size: 200% 200%;
+            animation: cosmicAsh 60s linear infinite;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        @keyframes northernLights {
+            0% { opacity: 0.3; transform: rotate(0deg) scale(1); }
+            25% { opacity: 0.5; transform: rotate(1deg) scale(1.1); }
+            50% { opacity: 0.4; transform: rotate(-1deg) scale(1.05); }
+            75% { opacity: 0.6; transform: rotate(2deg) scale(1.15); }
+            100% { opacity: 0.3; transform: rotate(0deg) scale(1); }
+        }
+        
+        @keyframes cosmicAsh {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 200%; }
+        }
         #ui { 
             position: absolute; bottom: 30px; width: 100%; text-align: center; 
             color: white; font-family: sans-serif; pointer-events: none; z-index: 10;
@@ -16,7 +60,7 @@
             color: #0ff; font-family: sans-serif; 
         }
         #video-container {
-            position: fixed; bottom: 10px; right: 10px; z-index: 100;
+            position: fixed; bottom: 10px; right: 10px; z-index: 9999;
             cursor: move; user-select: none;
             transition: box-shadow 0.3s ease; /* Smooth transition for hover effect */
         }
@@ -26,7 +70,7 @@
         #video-container.dragging {
             cursor: grabbing;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.8); /* Stronger glow when dragging */
-            z-index: 1000; /* Bring to front when dragging */
+            z-index: 10000; /* Bring to front when dragging */
         }
         #video-container video {
             width: 200px; height: 150px;
@@ -35,6 +79,22 @@
         #video-container .resize-handle {
             position: absolute; bottom: 0; right: 0; width: 20px; height: 20px;
             background: #00ffff; cursor: nwse-resize; border-radius: 0 0 6px 0;
+        }
+        #video-container .toggle-btn {
+            position: absolute; top: -30px; right: 0; width: 60px; height: 25px;
+            background: rgba(0, 255, 255, 0.8); border: 1px solid #00ffff; border-radius: 12px;
+            cursor: pointer; font-size: 10px; color: #000; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; z-index: 10001;
+        }
+        #video-container .toggle-btn:hover {
+            background: rgba(0, 255, 255, 1); transform: scale(1.05);
+        }
+        #video-container.hidden {
+            opacity: 0.1; pointer-events: none;
+        }
+        #video-container.hidden .toggle-btn {
+            opacity: 1; pointer-events: auto;
         }
         
         /* Enhanced Responsive Design for All Screen Sizes */
@@ -285,6 +345,7 @@
     <div id="loading">✨ PREPARING THE GALAXY... ✨</div>
     <div id="ui"><h1>Happy Monthsary my Kaye!</h1><p id="status">Waiting for hand...</p></div>
     <div id="video-container">
+        <div class="toggle-btn">HIDE</div>
         <video class="input_video"></video>
         <div class="resize-handle"></div>
     </div>
@@ -308,20 +369,59 @@
         let detectedGesture = "none";
         let confirmedGesture = "none";
 
-        // --- PERFORMANCE OPTIMIZATION ---
-        // Detect device capabilities and adjust performance
+        // --- ADVANCED PERFORMANCE OPTIMIZATION ---
+        // Enhanced device detection and adaptive performance
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isSmallScreen = window.innerWidth < 768;
+        const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth >= 768;
         const isLowEndDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+        const isHighEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency >= 8;
+        const pixelRatio = window.devicePixelRatio || 1;
         
-        // Adjust particle count based on device
+        // Advanced particle count optimization
         let optimizedParticleCount = 12000;
+        let particleSize = 0.25;
+        let targetFPS = 60;
+        let animationQuality = 'high';
+        
+        // Adaptive performance settings based on device capabilities
         if (isMobile && isSmallScreen) {
-            optimizedParticleCount = 6000; // Reduce particles on mobile
+            optimizedParticleCount = 3000; // Ultra-low for small mobile
+            particleSize = 0.15;
+            targetFPS = 30;
+            animationQuality = 'low';
             document.body.classList.add('performance-mode');
+        } else if (isMobile && !isSmallScreen) {
+            optimizedParticleCount = 5000; // Moderate for larger mobile
+            particleSize = 0.2;
+            targetFPS = 45;
+            animationQuality = 'medium';
+            document.body.classList.add('performance-mode');
+        } else if (isTablet) {
+            optimizedParticleCount = 7000; // Optimized for tablets
+            particleSize = 0.22;
+            targetFPS = 50;
+            animationQuality = 'medium';
         } else if (isLowEndDevice) {
-            optimizedParticleCount = 8000; // Reduce particles on low-end devices
+            optimizedParticleCount = 8000; // Reduced for low-end desktop
+            particleSize = 0.23;
+            targetFPS = 45;
+            animationQuality = 'medium';
             document.body.classList.add('performance-mode');
+        } else if (pixelRatio > 1.5) {
+            optimizedParticleCount = 10000; // Adjust for high-DPI displays
+            particleSize = 0.28;
+            targetFPS = 55;
+        } else if (isHighEnd) {
+            optimizedParticleCount = 15000; // Maximum for high-end devices
+            particleSize = 0.3;
+            targetFPS = 60;
+            animationQuality = 'ultra';
+        } else {
+            optimizedParticleCount = 12000; // Standard desktop
+            particleSize = 0.25;
+            targetFPS = 60;
+            animationQuality = 'high';
         }
         
         // --- PARTICLE GENERATORS ---
@@ -331,22 +431,23 @@
         const targetPos = new Float32Array(particleCount * 3);
         const curVel = new Float32Array(particleCount * 3);
         const originalPos = new Float32Array(particleCount * 3);
+        const particleColors = new Float32Array(particleCount * 3);
         
         // Time-based dispersion system
         let dispersionTimer = 0;
         let isDispersing = false;
         const DISPERSION_SPEED = 0.02; // Increased from 0.005 for faster dispersion
         
-        // Random glowing colors for each particle
-        const particleColors = new Float32Array(particleCount * 3);
+        // Cosmic glowing colors inspired by northern lights
         const glowColors = [
             [1, 1, 1],        // White
-            [1, 0.9, 0.7],    // Warm white
-            [0.9, 0.9, 1],    // Cool white
-            [1, 1, 0.8],      // Yellow-white
-            [0.8, 0.9, 1],    // Blue-white
-            [1, 0.8, 0.9],    // Pink-white
-            [0.9, 1, 0.9],    // Green-white
+            [0.5, 0.8, 1],    // Ice blue
+            [0.8, 0.5, 1],    // Purple
+            [0.5, 1, 0.8],    // Mint green
+            [1, 0.6, 0.8],    // Pink
+            [0.7, 0.9, 1],    // Sky blue
+            [1, 0.9, 0.5],    // Gold
+            [0.8, 1, 0.6],    // Lime
         ];
 
         for(let i=0; i<particleCount*3; i++) {
@@ -366,46 +467,59 @@
         geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
         geo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
         
-        // Create star texture with white core and glow
+        // Optimized texture creation based on device
         const createStarTexture = () => {
             const canvas = document.createElement('canvas');
-            canvas.width = 64; canvas.height = 64;
+            const quality = animationQuality === 'low' ? 32 : 64;
+            canvas.width = quality; canvas.height = quality;
             const ctx = canvas.getContext('2d');
             
-            // Create glowing star effect
-            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');     // Bright white core
-            gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.9)');   // White
-            gradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.4)');   // Warm glow
-            gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');     // Fade out
+            // Adaptive star effect based on quality
+            const gradient = ctx.createRadialGradient(quality/2, quality/2, 0, quality/2, quality/2, quality/2);
+            if (animationQuality === 'low') {
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.3)');
+                gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
+            } else if (animationQuality === 'medium') {
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                gradient.addColorStop(0.3, 'rgba(255, 255, 200, 0.4)');
+                gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');
+            } else {
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');     // Bright white core
+                gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.9)');   // White
+                gradient.addColorStop(0.5, 'rgba(255, 255, 200, 0.4)');   // Warm glow
+                gradient.addColorStop(1, 'rgba(255, 255, 150, 0)');     // Fade out
+            }
             
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 64, 64);
+            ctx.fillRect(0, 0, quality, quality);
             
-            // Add subtle star points
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.beginPath();
-            for(let i = 0; i < 4; i++) {
-                const angle = (Math.PI / 2) * i;
-                const x = 32 + Math.cos(angle) * 8;
-                const y = 32 + Math.sin(angle) * 8;
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + Math.cos(angle + Math.PI/8) * 4, y + Math.sin(angle + Math.PI/8) * 4);
-                ctx.lineTo(x + Math.cos(angle - Math.PI/8) * 4, y + Math.sin(angle - Math.PI/8) * 4);
-                ctx.closePath();
+            // Add star points only for medium+ quality
+            if (animationQuality !== 'low') {
+                ctx.fillStyle = `rgba(255, 255, 255, ${animationQuality === 'ultra' ? 0.9 : 0.8})`;
+                ctx.beginPath();
+                for(let i = 0; i < 4; i++) {
+                    const angle = (Math.PI / 2) * i;
+                    const x = quality/2 + Math.cos(angle) * (quality/8);
+                    const y = quality/2 + Math.sin(angle) * (quality/8);
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + Math.cos(angle + Math.PI/8) * (quality/16), y + Math.sin(angle + Math.PI/8) * (quality/16));
+                    ctx.lineTo(x + Math.cos(angle - Math.PI/8) * (quality/16), y + Math.sin(angle - Math.PI/8) * (quality/16));
+                    ctx.closePath();
+                }
+                ctx.fill();
             }
-            ctx.fill();
             
             return new THREE.CanvasTexture(canvas);
         };
 
         const mat = new THREE.PointsMaterial({ 
-            size: 0.25, 
+            size: particleSize, 
             map: createStarTexture(), 
             transparent: true, 
             blending: THREE.AdditiveBlending, 
             depthWrite: false, 
-            vertexColors: true 
+            vertexColors: true
         });
         const points = new THREE.Points(geo, mat);
         scene.add(points);
@@ -633,14 +747,8 @@
         let frameCount = 0;
         let lastTime = performance.now();
         let fps = 60;
-        let targetFPS = 60;
         
-        // Adjust target FPS based on device
-        if (isMobile && isSmallScreen) {
-            targetFPS = 30; // Reduce FPS on mobile
-        } else if (isLowEndDevice) {
-            targetFPS = 45; // Moderate FPS on low-end devices
-        }
+        // Use targetFPS from performance optimization section
         
         function animate() {
             requestAnimationFrame(animate);
@@ -693,8 +801,8 @@
             for (let i = 0; i < particleCount * 3; i++) {
                 const diff = targetPos[i] - positions[i];
                 curVel[i] += diff * 0.03; // Increased from 0.01 for faster acceleration
-                curVel[i] *= 0.92;        // Reduced from 0.9 for less damping (faster movement)
-                positions[i] += curVel[i] * 1.5; // Added multiplier for much faster movement
+                curVel[i] *= 0.96;        // Increased damping for less bounce
+                positions[i] += curVel[i];     // Removed multiplier for smoother movement
             }
 
             geo.attributes.position.needsUpdate = true;
@@ -723,6 +831,7 @@
 
         // --- ENHANCED DRAGGABLE VIDEO CONTAINER ---
         const videoContainer = document.getElementById('video-container');
+        const toggleBtn = videoContainer.querySelector('.toggle-btn');
         let isDragging = false;
         let currentX;
         let currentY;
@@ -735,6 +844,13 @@
         let lastY = 0;
         let velocityX = 0;
         let velocityY = 0;
+
+        // Toggle camera visibility
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent drag start
+            videoContainer.classList.toggle('hidden');
+            toggleBtn.textContent = videoContainer.classList.contains('hidden') ? 'SHOW' : 'HIDE';
+        });
 
         // Enhanced drag events with momentum
         videoContainer.addEventListener('mousedown', dragStart);
