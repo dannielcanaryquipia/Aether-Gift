@@ -113,6 +113,11 @@
             #loading {
                 font-size: 1.4em;
             }
+            
+            /* Use optimized particle size on large desktops */
+            .performance-mode .particle-size {
+                --particle-size: 0.09;
+            }
         }
         
         /* Large Screens (1200px to 1439px) - Large desktops, small laptops */
@@ -126,6 +131,11 @@
             #ui p {
                 font-size: 1.1em;
             }
+            
+            /* Use optimized particle size on large laptops */
+            .performance-mode .particle-size {
+                --particle-size: 0.08;
+            }
         }
         
         /* Desktop Screens (992px to 1199px) - Standard desktops */
@@ -138,6 +148,11 @@
             }
             #ui p {
                 font-size: 1em;
+            }
+            
+            /* Use optimized particle size on standard desktops */
+            .performance-mode .particle-size {
+                --particle-size: 0.07;
             }
         }
         
@@ -154,6 +169,11 @@
             }
             #loading {
                 font-size: 1.1em;
+            }
+            
+            /* Use optimized particle size on desktops */
+            .performance-mode .particle-size {
+                --particle-size: 0.08;
             }
         }
         
@@ -176,7 +196,12 @@
                 font-size: 1em;
             }
             #video-container .resize-handle {
-                width: 18px; height: 18px;
+                width: 14px; height: 14px;
+            }
+            
+            /* Use optimized particle size on tablets */
+            .performance-mode .particle-size {
+                --particle-size: 0.07;
             }
         }
         
@@ -200,6 +225,11 @@
             }
             #video-container .resize-handle {
                 width: 16px; height: 16px;
+            }
+            
+            /* Use optimized particle size on large phones */
+            .performance-mode .particle-size {
+                --particle-size: 0.05;
             }
         }
         
@@ -225,6 +255,11 @@
             }
             #video-container .resize-handle {
                 width: 14px; height: 14px;
+            }
+            
+            /* Use optimized particle size on medium phones */
+            .performance-mode .particle-size {
+                --particle-size: 0.04;
             }
         }
         
@@ -252,17 +287,22 @@
                 width: 12px; height: 12px;
             }
             
-            /* Performance optimizations for small devices */
-            body {
-                background: #000; /* Solid black instead of potential gradients */
+            /* Use optimized particle size on small phones */
+            .performance-mode .particle-size {
+                --particle-size: 0.04;
             }
         }
         
-        /* Performance optimizations for mobile devices */
+        /* Performance optimizations for small devices */
         @media (max-width: 768px) {
-            /* Reduce particle count on mobile for better performance */
+            /* Use optimized particle count on mobile for better performance */
             .performance-mode .particle-count {
-                --particle-count: 1500;
+                --particle-count: 1000;
+            }
+            
+            /* Use optimized particle size on mobile */
+            .performance-mode .particle-size {
+                --particle-size: 0.06;
             }
             
             /* Optimize animations */
@@ -301,6 +341,11 @@
             }
             #loading {
                 font-size: 1.6em;
+            }
+            
+            /* Use optimized particle size on ultra-wide screens */
+            .performance-mode .particle-size {
+                --particle-size: 0.1;
             }
         }
         
@@ -378,49 +423,50 @@
         const isHighEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency >= 8;
         const pixelRatio = window.devicePixelRatio || 1;
         
-        // Advanced particle count optimization
-        let optimizedParticleCount = 5000;
+        // Ultra-optimized particle count - minimal for maximum performance
+        let optimizedParticleCount = 2000;
         let particleSize = 0.1;
         let targetFPS = 60;
         let animationQuality = 'high';
         
         // Adaptive performance settings based on device capabilities
         if (isMobile && isSmallScreen) {
-            optimizedParticleCount = 1000; // Ultra-low for small mobile
-            particleSize = 0.05;
-            targetFPS = 60; // Increased from 30 for smoother animation
+            optimizedParticleCount = 400; // Ultra-low for small mobile
+            particleSize = 0.04;
+            targetFPS = 30; // Reduced for mobile performance
             animationQuality = 'low';
             document.body.classList.add('performance-mode');
         } else if (isMobile && !isSmallScreen) {
-            optimizedParticleCount = 1500; // Moderate for larger mobile
-            particleSize = 0.07;
-            targetFPS = 60; // Increased from 45 for smoother animation
+            optimizedParticleCount = 600; // Moderate for larger mobile
+            particleSize = 0.06;
+            targetFPS = 30; // Reduced for mobile performance
             animationQuality = 'medium';
             document.body.classList.add('performance-mode');
         } else if (isTablet) {
-            optimizedParticleCount = 2500; // Optimized for tablets
-            particleSize = 0.08;
-            targetFPS = 60; // Increased from 50 for smoother animation
+            optimizedParticleCount = 1200; // Optimized for tablets
+            particleSize = 0.07;
+            targetFPS = 45; // Balanced for tablets
             animationQuality = 'medium';
+            document.body.classList.add('performance-mode');
         } else if (isLowEndDevice) {
-            optimizedParticleCount = 3000; // Reduced for low-end desktop
-            particleSize = 0.09;
-            targetFPS = 60; // Increased from 45 for smoother animation
+            optimizedParticleCount = 1500; // Reduced for low-end desktop
+            particleSize = 0.08;
+            targetFPS = 45; // Balanced for low-end
             animationQuality = 'medium';
             document.body.classList.add('performance-mode');
         } else if (pixelRatio > 1.5) {
-            optimizedParticleCount = 4000; // Adjust for high-DPI displays
-            particleSize = 0.11;
-            targetFPS = 60; // No change - already smooth
+            optimizedParticleCount = 1800; // Adjust for high-DPI displays
+            particleSize = 0.09;
+            targetFPS = 45; // Balanced for high-DPI
         } else if (isHighEnd) {
-            optimizedParticleCount = 5000; // Maximum for high-end devices
-            particleSize = 0.12;
-            targetFPS = 60; // No change - already smooth
-            animationQuality = 'ultra';
-        } else {
-            optimizedParticleCount = 5000; // Standard desktop
+            optimizedParticleCount = 2500; // Reduced even for high-end devices
             particleSize = 0.1;
-            targetFPS = 60; // No change - already smooth
+            targetFPS = 60; // Smooth for high-end
+            animationQuality = 'high';
+        } else {
+            optimizedParticleCount = 1800; // Standard desktop further reduced
+            particleSize = 0.09;
+            targetFPS = 45; // Balanced for standard
             animationQuality = 'high';
         }
         
@@ -524,8 +570,22 @@
         const points = new THREE.Points(geo, mat);
         scene.add(points);
 
+        // Camera zoom variables
+        let targetZoom = 1;
+        let currentZoom = 1;
+        let zoomSpeed = 0.05;
+
+        // Galaxy-specific rotation variables - increased speed
+        let galaxyRotation = 0;
+        let galaxyRotationSpeed = 0.03; // Faster clockwise rotation speed (increased from 0.02)
+        let isGalaxyActive = false;
+
         // --- SHAPE LOGIC ---
         function setHeartTarget() {
+            // Reset zoom when switching to other gestures
+            targetZoom = 1;
+            isGalaxyActive = false; // Disable galaxy rotation
+            
             for (let i = 0; i < particleCount; i++) {
                 const t = (i / particleCount) * Math.PI * 2;
                 const x = 16 * Math.pow(Math.sin(t), 3);
@@ -544,6 +604,10 @@
         }
 
         function setTextTarget(text) {
+            // Reset zoom when switching to other gestures
+            targetZoom = 1;
+            isGalaxyActive = false; // Disable galaxy rotation
+            
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 800; canvas.height = 200; // Increased from 600x150 for better clarity
@@ -605,6 +669,152 @@
             mat.size = 0.13; // Further reduced for better performance
         }
 
+        function setGalaxyTarget() {
+            // Set zoom target for galaxy
+            targetZoom = 0.3; // Zoom in for galaxy view
+            isGalaxyActive = true; // Enable galaxy rotation
+            
+            // Clear all target positions first
+            for (let i = 0; i < particleCount * 3; i++) {
+                targetPos[i] = 0;
+            }
+            
+            // Calculate particle distribution - larger sphere, more spread galaxy
+            const sphereParticles = Math.floor(particleCount * 0.35); // 35% for more prominent central sphere
+            const galaxyParticles = particleCount - sphereParticles;
+            
+            // Create larger central sphere (black hole core)
+            for (let i = 0; i < sphereParticles; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const radius = Math.random() * 4.5; // Much larger and more prominent sphere
+                
+                // Perfectly centered sphere - no offset
+                const x = radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.sin(phi) * Math.sin(theta);
+                const z = radius * Math.cos(phi);
+                
+                targetPos[i*3] = x;
+                targetPos[i*3+1] = y;
+                targetPos[i*3+2] = z;
+                
+                // Realistic star core colors - white light yellow
+                const starCoreColors = [
+                    [1, 1, 0.95],      // Warm white yellow
+                    [1, 0.98, 0.9],   // Bright yellow white
+                    [0.98, 1, 0.92],  // Soft yellow white
+                    [1, 0.95, 0.88],   // Golden white
+                    [0.99, 1, 0.94],  // Pale yellow
+                    [1, 0.97, 0.93],  // Warm light yellow
+                ];
+                const color = starCoreColors[Math.floor(Math.random() * starCoreColors.length)];
+                particleColors[i*3] = color[0];
+                particleColors[i*3+1] = color[1];
+                particleColors[i*3+2] = color[2];
+            }
+            
+            // Create circular ring loops instead of spiral
+            for (let i = sphereParticles; i < particleCount; i++) {
+                const particleIndex = i - sphereParticles;
+                
+                // Create multiple concentric rings
+                const ringCount = 8; // Number of circular rings
+                const particlesPerRing = Math.floor(galaxyParticles / ringCount);
+                const ringIndex = Math.floor(particleIndex / particlesPerRing);
+                const particleInRing = particleIndex % particlesPerRing;
+                
+                // Calculate ring radius - increasing from center outward with better separation
+                const minRadius = 5; // Start further outside central sphere for better separation
+                const maxRadius = 22; // Maximum ring radius
+                const ringRadius = minRadius + (ringIndex / (ringCount - 1)) * (maxRadius - minRadius);
+                
+                // Create perfect circle for each ring
+                const angle = (particleInRing / particlesPerRing) * Math.PI * 2;
+                
+                // Add volume layers for thicker, more visible rings
+                const volumeLayers = 4; // More layers for thicker rings
+                const layerIndex = particleIndex % volumeLayers;
+                const layerOffset = (layerIndex - 1.5) * 0.3; // Increased thickness of rings
+                
+                // Base circular position with enhanced volume
+                const baseX = (ringRadius + layerOffset) * Math.cos(angle);
+                const baseY = (ringRadius + layerOffset) * Math.sin(angle) * 0.12; // Even flatter disk for better ring visibility
+                const baseZ = (Math.random() - 0.5) * 1.2 + layerOffset * 0.15; // More Z variation for 3D volume
+                
+                // Enhanced tilt transformation for dramatic perspective
+                const tiltAngle = Math.PI / 3.5; // Increased tilt for dramatic view
+                const perspectiveAngle = Math.PI / 6; // More perspective tilt
+                
+                const x1 = baseX * Math.cos(tiltAngle) - baseY * Math.sin(tiltAngle);
+                const y1 = baseX * Math.sin(tiltAngle) + baseY * Math.cos(tiltAngle) * 2.8; // Enhanced tilt
+                const z1 = baseZ;
+                
+                // Apply additional perspective transformation
+                const x = x1 * Math.cos(perspectiveAngle) - z1 * Math.sin(perspectiveAngle);
+                const y = y1;
+                const z = x1 * Math.sin(perspectiveAngle) + z1 * Math.cos(perspectiveAngle);
+                
+                // Add subtle rotation animation for rings
+                const rotationSpeed = 0.02 * (1 + ringIndex * 0.1); // Different speeds for different rings
+                const wobbleX = Math.cos(angle + rotationSpeed) * 0.1;
+                const wobbleY = Math.sin(angle + rotationSpeed) * 0.05;
+                const wobbleZ = Math.cos(angle * 2 + rotationSpeed) * 0.05;
+                
+                targetPos[i*3] = x + wobbleX;
+                targetPos[i*3+1] = y + wobbleY;
+                targetPos[i*3+2] = z + wobbleZ;
+                
+                // Enhanced ultra-glowing star colors
+                const distanceFromCenter = Math.sqrt(x * x + y * y);
+                let color;
+                
+                if (distanceFromCenter < 4) {
+                    // Inner accretion disk - ultra bright glowing stars
+                    const ultraGlowingColors = [
+                        [1, 1, 1],        // Brilliant white
+                        [1, 0.98, 0.95], // Ultra warm white
+                        [0.95, 0.95, 1], // Ultra cool white
+                        [1, 0.99, 0.98], // Ultra bright white
+                    ];
+                    color = ultraGlowingColors[Math.floor(Math.random() * ultraGlowingColors.length)];
+                } else if (distanceFromCenter < 8) {
+                    // Middle disk - super bright blue-white stars
+                    const superBrightStarColors = [
+                        [0.95, 0.98, 1],  // Super bright ice blue
+                        [0.98, 0.98, 1],  // Ultra very light blue
+                        [0.9, 0.95, 1],   // Super bright sky blue
+                        [0.96, 0.96, 0.99], // Super cool white
+                    ];
+                    color = superBrightStarColors[Math.floor(Math.random() * superBrightStarColors.length)];
+                } else if (distanceFromCenter < 14) {
+                    // Outer disk - ultra glowing stellar populations
+                    const ultraGlowingOuterColors = [
+                        [0.85, 0.95, 1],  // Ultra soft blue
+                        [0.95, 0.8, 1],   // Ultra bright mauve
+                        [0.98, 0.9, 0.98], // Ultra bright pink-white
+                        [0.75, 0.9, 0.98], // Ultra bright dusty blue
+                    ];
+                    color = ultraGlowingOuterColors[Math.floor(Math.random() * ultraGlowingOuterColors.length)];
+                } else {
+                    // Far outer arms - ultra glowing distant stars
+                    const ultraGlowingFarColors = [
+                        [0.8, 0.85, 0.98],  // Ultra bright dim blue
+                        [0.85, 0.75, 0.95], // Ultra bright dim purple
+                        [0.95, 0.85, 0.9],  // Ultra bright dim pink
+                        [0.8, 0.85, 0.95],  // Ultra bright dusty lavender
+                    ];
+                    color = ultraGlowingFarColors[Math.floor(Math.random() * ultraGlowingFarColors.length)];
+                }
+                
+                particleColors[i*3] = color[0];
+                particleColors[i*3+1] = color[1];
+                particleColors[i*3+2] = color[2];
+            }
+            
+            geo.attributes.color.needsUpdate = true;
+            mat.size = 0.22; // Much larger particles for maximum glowing effect
+        }
+
         function setExplosionTarget() {
             for (let i = 0; i < particleCount*3; i++) targetPos[i] = (Math.random() - 0.5) * 40;
             
@@ -662,10 +872,11 @@
                 const middleOpen = middleTip.y < middleMcp.y;
                 const ringOpen = ringTip.y < ringMcp.y;
                 const pinkyOpen = pinkyTip.y < pinkyMcp.y;
+                const thumbOpen = thumbTip.y < h[2].y; // Check if thumb is extended
+
+const openFingers = [indexOpen, middleOpen, ringOpen, pinkyOpen].filter(Boolean).length;
                 
-                const openFingers = [indexOpen, middleOpen, ringOpen, pinkyOpen].filter(Boolean).length;
-                
-                console.log(`✋ Hand detected! Open fingers: ${openFingers}, Thumb-index dist: ${thumbIndexDist.toFixed(3)}`);
+                console.log(`✋ Hand detected! Open fingers: ${openFingers}, Thumb-index dist: ${thumbIndexDist.toFixed(3)}, Thumb open: ${thumbOpen}`);
                 
                 // Gesture classification
                 let currentAttempt = "none";
@@ -681,6 +892,12 @@
                     currentAttempt = "love";
                     console.log("✌️ Peace sign detected - Love text");
                 }
+                // More flexible OK sign detection
+                else if ((thumbIndexDist < 0.12 || (thumbTip.x > indexTip.x && Math.abs(thumbTip.y - indexTip.y) < 0.15)) && 
+                          openFingers >= 2 && openFingers <= 4) {
+                    currentAttempt = "galaxy";
+                    console.log("👌 OK sign detected - Galaxy formation");
+                }
 
                 // TIME BASED DETECTION
                 if (currentAttempt === detectedGesture && currentAttempt !== "none") {
@@ -695,14 +912,19 @@
                                 console.log("❤️ FORMING HEART SHAPE");
                                 break;
                             case "monthsary":
-                                setTextTarget("Happy Monthsary");
-                                document.getElementById('status').innerText = "🎉 Happy Monthsary!";
-                                console.log("🎉 FORMING 'HAPPY MONTHSARY' TEXT");
+                                setTextTarget("D ❤️ K");
+                                document.getElementById('status').innerText = "🎉 D ❤️ K!";
+                                console.log("🎉 FORMING 'D ❤️ K' TEXT");
                                 break;
                             case "love":
-                                setTextTarget("I love you Kaye");
-                                document.getElementById('status').innerText = "💕 I love you Kaye!";
-                                console.log("💕 FORMING 'I LOVE YOU KAYE' TEXT");
+                                setTextTarget("I ❤️ u");
+                                document.getElementById('status').innerText = "💕 I ❤️ u!";
+                                console.log("💕 FORMING 'I ❤️ U' TEXT");
+                                break;
+                            case "galaxy":
+                                setGalaxyTarget();
+                                document.getElementById('status').innerText = "🌌 I want to be in your world!";
+                                console.log("🌌 FORMING GALAXY SPIRAL");
                                 break;
                         }
                     }
@@ -805,11 +1027,24 @@
                 positions[i] += curVel[i];     // Smooth movement
             }
 
+            // Smooth camera zoom interpolation
+            currentZoom += (targetZoom - currentZoom) * zoomSpeed;
+            camera.position.z = 15 * currentZoom;
+
             geo.attributes.position.needsUpdate = true;
             
-            // Reduce rotation frequency on mobile for performance
-            const rotationSpeed = isMobile ? 0.004 : 0.008;
-            points.rotation.y += rotationSpeed;
+            // Handle rotation differently for galaxy vs other gestures
+            if (isGalaxyActive) {
+                // Galaxy-specific clockwise rotation (like a spinning disk)
+                galaxyRotation += galaxyRotationSpeed;
+                points.rotation.z = galaxyRotation; // Rotate on Z axis for clockwise disk spin
+                points.rotation.y = 0; // No Y rotation for galaxy
+            } else {
+                // Standard rotation for other gestures
+                const rotationSpeed = isMobile ? 0.004 : 0.008;
+                points.rotation.y += rotationSpeed;
+                points.rotation.z = 0; // Reset Z rotation
+            }
             
             renderer.render(scene, camera);
             
